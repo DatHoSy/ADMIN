@@ -1,24 +1,17 @@
-import logo from './logo.svg';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import { User } from './containers/User/User';
+import { DashBoard } from './containers/DashBoard';
+import { LayoutPrimary } from './components/Layout';
+import { TestUseState } from './components/TestUseState';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path='/' element={<LayoutPrimary titlePage="Dashboard"><DashBoard /></LayoutPrimary>}></Route>
+      <Route path='/user' element={<LayoutPrimary titlePage="Account/Users"><User /></LayoutPrimary>}></Route>
+      <Route path='/count' element={<TestUseState />}></Route>
+    </Routes>
   );
 }
 
