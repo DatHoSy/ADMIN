@@ -29,14 +29,12 @@ const SubmitButton = ({ form }) => {
 };
 
 
-export const User = () => {
+export const Customer = () => {
     const dispatch = useDispatch();
-    let listData = useSelector((state) => state.listUser.dataUser);
+    let listData = useSelector((state) => state.listCustomer);
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [user, setUser] = useState({});
-    const [isEdit, setIsEdit] = useState(false);
     const showModal = () => {
         setOpen(true);
     };
@@ -52,48 +50,25 @@ export const User = () => {
     };
 
     useEffect(() => {
-        dispatch.listUser.getAll();
+        dispatch.listCustomer.getAll();
     }, []);
 
-    const saveUser = (user) => {
-        if (isEdit) {
-            const oldListUser = listData.filter((preUser) => preUser.id !== user.id);
-            const newUser = listData.filter((preUser) => preUser.id === user.id);
-            newUser.id = user.id;
-            newUser.firstName = user.firstName;
-            newUser.birthDate = user.birthDate;
-            newUser.email = user.email;
-            newUser.phone = user.phone;
-            console.log(newUser);
-            oldListUser.push(newUser);
-            dispatch.listUser.setData();
-            setIsEdit(false);
-            return;
-        }
-        const newData = [...listData, {
+    const saveUser = (customer) => {
+        const newData = [...listData.customers, {
             id: Math.floor(Math.random() * 10000) + 1,
-            firstName: user.firstName,
-            birthDate: user.birthDate,
-            email: user.email,
-            phone: user.phone,
+            firstName: customer.FirstName,
+            birthDate: customer.BirthDate,
+            email: customer.Email,
         }]
-        dispatch.listUser.setAddData(newData);
+        dispatch.listCustomer.setData(newData);
         setOpen(false);
     };
     const RemoveUser = (value) => {
-        const newData = listData.filter((user) => user.id !== value);
-        dispatch.listUser.setData(newData);
+        const newData = listData.customers.filter((customer) => customer.id !== value);
+        dispatch.listCustomer.setData(newData);
     };
 
-    const EditUser = async (value) => {
-        const newUser = listData.filter((user) => user.id === value);
-        setUser(...newUser);
-        setIsEdit(true);
-        setTimeout(() => {
-            form.resetFields();
-        }, 1);
-        setOpen(true);
-        console.log(...newUser);
+    const EditUser = (user) => {
     };
 
     const columns = [
@@ -135,13 +110,12 @@ export const User = () => {
             ),
         },
     ];
-
     console.log("user page render");
     return (
         <>
-            <Button type='primary' onClick={showModal}>Add User</Button>
+            <Button type='primary' onClick={showModal}>Add Customer</Button>
             <Excel
-                fileName="export-user"
+                fileName="export-Customer"
                 data={[
                     {
                         columns: [
@@ -161,7 +135,7 @@ export const User = () => {
                                 width: 50,
                             },
                         ],
-                        data: listData,
+                        data: listData.customers,
                         tabName: "info",
                     },
                     {
@@ -177,32 +151,24 @@ export const User = () => {
                                 width: 30,
                             },
                         ],
-                        data: listData,
+                        data: listData.customers,
                         tabName: "contact",
                     },
                 ]}
             >
-                <Button>Export users</Button>
+                <Button>Export Customer</Button>
             </Excel>
-            <h1>{user.firstName}</h1>
             <Modal
-                title="Add User"
+                title="Add Customer"
                 open={open}
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={null}
             >
-                <Form form={form} name="validateOnly" layout="vertical" initialValues={user} autoComplete="off" onFinish={saveUser}>
+                <Form form={form} name="validateOnly" layout="vertical" autoComplete="off" onFinish={saveUser}>
                     <Form.Item
-                        name="id"
-                        label="id"
-                        hidden='true'
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="firstName"
+                        name="FirstName"
                         label="FirstName"
                         rules={[
                             {
@@ -213,7 +179,7 @@ export const User = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="birthDate"
+                        name="BirthDate"
                         label="BirthDate"
                         rules={[
                             {
@@ -224,14 +190,14 @@ export const User = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="email"
+                        name="Email"
                         label="Email"
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="phone"
-                        label="Phone Number"
+                        name="Tags"
+                        label="Tags"
                     >
                         <Input />
                     </Form.Item>
@@ -245,7 +211,7 @@ export const User = () => {
             </Modal>
             <Table
                 columns={columns}
-                dataSource={listData}
+                dataSource={listData.customers}
                 pagination={{
                     pageSize: 15,
                 }}

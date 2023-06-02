@@ -1,7 +1,8 @@
-import { Space, Table, Tag, Button, Modal, Form, Input } from 'antd';
+import { Space, Table, Button, Modal, Form, Input } from 'antd';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Excel from '../../components/Excel';
+import confirm from 'antd/es/modal/confirm';
 
 const SubmitButton = ({ form }) => {
     const [submittable, setSubmittable] = useState(false);
@@ -29,14 +30,20 @@ const SubmitButton = ({ form }) => {
 };
 
 
-export const User = () => {
+export const Product = () => {
     const dispatch = useDispatch();
-    let listData = useSelector((state) => state.listUser.dataUser);
+    let rawData = useSelector((state) => state.listProduct.products);
     const [form] = Form.useForm();
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [user, setUser] = useState({});
-    const [isEdit, setIsEdit] = useState(false);
+    let listData = [];
+    for (let index = 0; index < rawData.length; index++) {
+        let newData = rawData[index];
+        if (newData.images.length >= 1) {
+            newData.image = newData.images[0];
+        }
+        listData = [...listData, rawData[index]];
+    }
     const showModal = () => {
         setOpen(true);
     };
@@ -52,48 +59,27 @@ export const User = () => {
     };
 
     useEffect(() => {
-        dispatch.listUser.getAll();
+        dispatch.listProduct.getAll();
     }, []);
 
-    const saveUser = (user) => {
-        if (isEdit) {
-            const oldListUser = listData.filter((preUser) => preUser.id !== user.id);
-            const newUser = listData.filter((preUser) => preUser.id === user.id);
-            newUser.id = user.id;
-            newUser.firstName = user.firstName;
-            newUser.birthDate = user.birthDate;
-            newUser.email = user.email;
-            newUser.phone = user.phone;
-            console.log(newUser);
-            oldListUser.push(newUser);
-            dispatch.listUser.setData();
-            setIsEdit(false);
-            return;
-        }
+    const saveUser = (product) => {
         const newData = [...listData, {
             id: Math.floor(Math.random() * 10000) + 1,
-            firstName: user.firstName,
-            birthDate: user.birthDate,
-            email: user.email,
-            phone: user.phone,
+            title: product.title,
+            price: product.price,
+            brand: product.brand,
+            description: product.description,
         }]
-        dispatch.listUser.setAddData(newData);
+        dispatch.listProduct.setData(newData);
         setOpen(false);
     };
     const RemoveUser = (value) => {
-        const newData = listData.filter((user) => user.id !== value);
-        dispatch.listUser.setData(newData);
+        confirm('hello');
+        const newData = listData.filter((product) => product.id !== value);
+        dispatch.listProduct.setData(newData);
     };
 
-    const EditUser = async (value) => {
-        const newUser = listData.filter((user) => user.id === value);
-        setUser(...newUser);
-        setIsEdit(true);
-        setTimeout(() => {
-            form.resetFields();
-        }, 1);
-        setOpen(true);
-        console.log(...newUser);
+    const EditUser = (value) => {
     };
 
     const columns = [
@@ -104,25 +90,25 @@ export const User = () => {
             render: (text) => <img width={50} height={50} src={text}/>,
         },
         {
-            title: 'First Name',
-            dataIndex: 'firstName',
-            key: 'firstName',
+            title: 'Title',
+            dataIndex: 'title',
+            key: 'title',
             render: (text) => <a>{text}</a>,
         },
         {
-            title: 'Phone',
-            dataIndex: 'phone',
-            key: 'phone',
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
         },
         {
-            title: 'BirthDate',
-            dataIndex: 'birthDate',
-            key: 'birthDate',
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
         },
         {
-            title: 'Email',
-            key: 'email',
-            dataIndex: 'email',
+            title: 'Brand',
+            key: 'brand',
+            dataIndex: 'brand',
         },
         {
             title: 'Action',
@@ -135,29 +121,28 @@ export const User = () => {
             ),
         },
     ];
-
     console.log("user page render");
     return (
         <>
-            <Button type='primary' onClick={showModal}>Add User</Button>
+            <Button type='primary' onClick={showModal}>Add Product</Button>
             <Excel
-                fileName="export-user"
+                fileName="export-Product"
                 data={[
                     {
                         columns: [
                             {
-                                title: "User Id",
-                                dataIndex: "id",
-                                width: 5,
-                            },
-                            {
-                                title: "Name",
-                                dataIndex: "username",
+                                title: "Title",
+                                dataIndex: "title",
                                 width: 20,
                             },
                             {
-                                title: "Email",
-                                dataIndex: "email",
+                                title: "Price",
+                                dataIndex: "price",
+                                width: 20,
+                            },
+                            {
+                                title: "brand",
+                                dataIndex: "brand",
                                 width: 50,
                             },
                         ],
@@ -167,13 +152,13 @@ export const User = () => {
                     {
                         columns: [
                             {
-                                title: "Name",
-                                dataIndex: "username",
+                                title: "Description",
+                                dataIndex: "description",
                                 width: 30,
                             },
                             {
-                                title: "Phone",
-                                dataIndex: "phone",
+                                title: "Category",
+                                dataIndex: "category",
                                 width: 30,
                             },
                         ],
@@ -182,28 +167,20 @@ export const User = () => {
                     },
                 ]}
             >
-                <Button>Export users</Button>
+                <Button>Export Product</Button>
             </Excel>
-            <h1>{user.firstName}</h1>
             <Modal
-                title="Add User"
+                title="Add Product"
                 open={open}
                 onOk={handleOk}
                 confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={null}
             >
-                <Form form={form} name="validateOnly" layout="vertical" initialValues={user} autoComplete="off" onFinish={saveUser}>
+                <Form form={form} name="validateOnly" layout="vertical" autoComplete="off" onFinish={saveUser}>
                     <Form.Item
-                        name="id"
-                        label="id"
-                        hidden='true'
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="firstName"
-                        label="FirstName"
+                        name="title"
+                        label="Title"
                         rules={[
                             {
                                 required: true,
@@ -213,8 +190,8 @@ export const User = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="birthDate"
-                        label="BirthDate"
+                        name="price"
+                        label="Price"
                         rules={[
                             {
                                 required: true,
@@ -224,14 +201,14 @@ export const User = () => {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="email"
-                        label="Email"
+                        name="brand"
+                        label="Brand"
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name="phone"
-                        label="Phone Number"
+                        name="description"
+                        label="Description"
                     >
                         <Input />
                     </Form.Item>

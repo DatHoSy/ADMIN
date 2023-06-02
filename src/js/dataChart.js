@@ -7,7 +7,8 @@ for (let index = 1; index <= 12; index++) {
             {
                 "hour": (12 - index + 1) + '.00',
                 "gdp": index + Math.random() * 19000000000 + 1000000000,
-                "name": "User"
+                "name": "User",
+                "fill": "#8884d8"
             },
         )
     } else {

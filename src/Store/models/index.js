@@ -1,2 +1,4 @@
 import { listUser } from './listUser';
-export { listUser };
+import { listCustomer } from './listCustomer';
+import { listProduct } from './listProduct';
+export { listUser, listCustomer, listProduct};

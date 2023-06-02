@@ -13,26 +13,23 @@ function getItem(label, key, icon, children) {
     };
 }
 const items = [
-    {
-        label:(<Link to={'/'}>DashBoard</Link>),
-        key: 'mail',
-        icon: <PieChartOutlined />,
-      },{
-        label: (
-            <Link to={'/user'}>Account/Users</Link>
-        ),
-        key: 'alipay',
-      },
+    // {
+    //     label:(<Link to={'/'}>DashBoard</Link>),
+    //     key: 'mail',
+    //     icon: <PieChartOutlined />,
+    //   },{
+    //     label: (
+    //         <Link to={'/user'}>Account/Users</Link>
+    //     ),
+    //     key: 'alipay',
+    //   },
 
-    // getItem(l, '1', <PieChartOutlined />),
-    // getItem(<NavLink to={'/user'}>Account/Users</NavLink>, '2', <DesktopOutlined />),
-    // getItem('User', 'sub1', <UserOutlined />, [
-    //     getItem('Tom', '3'),
-    //     getItem('Bill', '4'),
-    //     getItem('Alex', '5'),
-    // ]),
-    // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-    // getItem('Files', '9', <FileOutlined />),
+    getItem(<Link to={'/'}>DashBoard</Link>, '1', <PieChartOutlined />),
+    getItem(<Link to={'/user'}>Account/Users</Link>, '2', <DesktopOutlined />),
+    getItem(<Link to={'/customers'}>Customers</Link>, '3', <UserOutlined />),
+    getItem(<Link to={'/products'}>Products</Link>, '4', <TeamOutlined />),
+    getItem(<Link to={'/orders'}>Orders</Link>, '5', <FileOutlined />),
+    getItem(<Link to={'/coupons'}>Coupons</Link>, '6', <FileOutlined />),
 ];
 export const SideBar = () => {
     const [collapsed, setCollapsed] = useState(false);
